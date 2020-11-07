@@ -1,34 +1,30 @@
 import cv2
 import numpy as np
+from display import Display
+from extractor import Extractor
 
 width = 1920//2
 height = 1080//2
-display_name = 'SLAM'
+# display_name = 'SLAM'
+disp = Display(width, height)
+fe = Extractor()
 
-class FeatureExtractor(object):
-    def __init__(self):
-        self.orb = cv2.ORB_create(200) # num features
-
-    def extract(self, img):
-        feats = cv2.goodFeaturesToTrack(np.mean(img, axis=2).astype(np.uint8), 3000, qualityLevel=0.01, minDistance=3)
-        kps = [cv2.KeyPoint(x=f[0][0], y=f[0][1], _size=20) for f in feats]
-        des = self.orb.compute(img, kps)
-        return kps, des
-
-fe = FeatureExtractor()
 def process_frame(img):
-    # load
     img = cv2.resize(img, (width, height))
+    matches = fe.extract(img)
 
-    # features
-    kps, des = fe.extract(img)
-    for p in kps:
-        u, v = map(lambda x: int(round(x)), p.pt)
-        cv2.circle(img, (u,v), color=(0,255,0), radius=3)
+    print("%d matches" % (len(matches)))
 
+    for pt1, pt2 in matches:
+        u1, v1 = map(lambda x: int(round(x)), pt1.pt)
+        u2, v2 = map(lambda x: int(round(x)), pt2.pt)
+        cv2.circle(img, (u1,v1), color=(0,255,0), radius=3)
+        cv2.line(img, (u1,v1), (u2,v2), color=(255,0,0))
+        
     # display
-    cv2.imshow(display_name, img)
-    cv2.waitKey(1)
+    # cv2.imshow(display_name, img)
+    # cv2.waitKey(1)
+    disp.paint(img)
 
 if __name__ == "__main__":
     cap = cv2.VideoCapture("test.mp4")
