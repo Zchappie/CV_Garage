@@ -11,7 +11,9 @@ class FeatureExtractor(object):
 
     def extract(self, img):
         feats = cv2.goodFeaturesToTrack(np.mean(img, axis=2).astype(np.uint8), 3000, qualityLevel=0.01, minDistance=3)
-        return feats
+        kps = [cv2.KeyPoint(x=f[0][0], y=f[0][1], _size=20) for f in feats]
+        des = self.orb.compute(img, kps)
+        return kps, des
 
 fe = FeatureExtractor()
 def process_frame(img):
@@ -19,10 +21,9 @@ def process_frame(img):
     img = cv2.resize(img, (width, height))
 
     # features
-    kp = fe.extract(img)
-    print(kp)
-    for p in kp:
-        u, v = map(lambda x: int(round(x)), p[0])
+    kps, des = fe.extract(img)
+    for p in kps:
+        u, v = map(lambda x: int(round(x)), p.pt)
         cv2.circle(img, (u,v), color=(0,255,0), radius=3)
 
     # display
