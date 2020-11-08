@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-from skimage.feature import match_descriptors, ORB, plot_matches
+# from skimage.feature import match_descriptors, ORB, plot_matches
 from skimage.measure import ransac
+from skimage.transform import FundamentalMatrixTransform
 
 class Extractor(object):
     def __init__(self):
@@ -27,9 +28,14 @@ class Extractor(object):
                     kp1 = kps[m.queryIdx].pt
                     kp2 = self.last['kps'][m.trainIdx].pt
                     ret.append((kp1, kp2))
+        if len(ret) > 0:
+            ret = np.array(ret)
+            # filtering the bad matches, use the ransac and fundamental mat
+            model, inliers = ransac((ret[:, 0] , ret[:, 1]),
+                        FundamentalMatrixTransform, min_samples=8,
+                        residual_threshold=0.01, max_trials=100)
 
-        # filtering the bad matches, use the ransac and fundamental mat
-        # model, inliers = ransac(())
+            print(sum(inliers))
 
         # return
         self.last = {'kps':kps, 'des':des}
