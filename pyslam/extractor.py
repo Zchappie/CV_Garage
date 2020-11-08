@@ -33,9 +33,9 @@ class Extractor(object):
             # filtering the bad matches, use the ransac and fundamental mat
             model, inliers = ransac((ret[:, 0] , ret[:, 1]),
                         FundamentalMatrixTransform, min_samples=8,
-                        residual_threshold=0.01, max_trials=100)
+                        residual_threshold=1, max_trials=100)
 
-            print(sum(inliers))
+            ret = ret[inliers]
 
         # return
         self.last = {'kps':kps, 'des':des}
