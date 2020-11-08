@@ -133,3 +133,5 @@ dmypy.json
 pyslam/videos/
 
 *.mp4
+
+pyslam/.vscode/
