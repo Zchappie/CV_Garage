@@ -46,7 +46,8 @@ class Extractor(object):
 
             ret = ret[inliers]
 
-            print(model.params)
+            s, v, d = np.linalg.svd(model.params)
+            print(v)
 
         # return
         self.last = {'kps':kps, 'des':des}
