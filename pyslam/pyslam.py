@@ -7,21 +7,20 @@ width = 1920//2
 height = 1080//2
 # display_name = 'SLAM'
 disp = Display(width, height)
-fe = Extractor()
+F = 1
+K = np.array([[F,0,width//2],[0,F,height//2],[0, 0, 1]])
+fe = Extractor(K)
 
 def process_frame(img):
     img = cv2.resize(img, (width, height))
     matches = fe.extract(img)
 
-    print("%d matches" % (len(matches)))
-
-    def denoramlize(pt):
-        return int(round(pt[0]+img.shape[0]/2)), int(round(pt[1]+img.shape[1]/2))
+    print("After detection and processing, %d matches remain" % (len(matches)))
 
     for pt1, pt2 in matches:
         # de-normailze coords
-        u1, v1 = denoramlize(pt1)
-        u2, v2 = denoramlize(pt2)
+        u1, v1 = fe.denoramlize(pt1)
+        u2, v2 = fe.denoramlize(pt2)
         cv2.circle(img, (u1,v1), color=(0,255,0), radius=3)
         cv2.line(img, (u1,v1), (u2,v2), color=(255,0,0))
         

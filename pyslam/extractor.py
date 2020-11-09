@@ -1,14 +1,28 @@
 import cv2
 import numpy as np
+np.set_printoptions(suppress=True)
 # from skimage.feature import match_descriptors, ORB, plot_matches
 from skimage.measure import ransac
 from skimage.transform import EssentialMatrixTransform, FundamentalMatrixTransform
 
+def add_ones(x):
+    return np.concatenate([x, np.ones((x.shape[0], 1))], axis=1)
+
 class Extractor(object):
-    def __init__(self):
+    def __init__(self, K):
         self.orb = cv2.ORB_create() # num features
         self.bf = cv2.BFMatcher(cv2.NORM_HAMMING) # brute force match
         self.last = None
+        self.K = K
+        self.Kinv = np.linalg.inv(self.K)
+
+    def normalize(self, pts):
+        return np.dot(self.Kinv, add_ones(pts).T).T[:, 0:2]
+
+
+    def denoramlize(self, pt):
+        ret = np.dot(self.K, [pt[0], pt[1], 1])
+        return int(round(ret[0])), int(round(ret[1]))
 
     def extract(self, img):
         # detection
@@ -33,8 +47,8 @@ class Extractor(object):
             ret = np.array(ret)
             
             # normalize coords, subtract to move to 0
-            ret[:, :, 0] -= img.shape[0]//2
-            ret[:, :, 1] -= img.shape[1]//2
+            ret[:, 0, :] = self.normalize(ret[:, 0, :])
+            ret[:, 1, :] = self.normalize(ret[:, 1, :])
 
             # filtering the bad matches, use the ransac and fundamental mat
             model, inliers = ransac((ret[:, 0] , ret[:, 1]),
