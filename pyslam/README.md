@@ -6,7 +6,7 @@
 
 ## Display
 
-First time to try PyGam for display purpose. 
+First time to try PyGame for display purpose. 
 
 1. `screen` object is a canvas with frame to hold everything; the `surface` is like a (separate) paper for drawing
 2. `.blit()` is used to copy the contents of one `Surface` to another display like `screen`
