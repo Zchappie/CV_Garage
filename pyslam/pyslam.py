@@ -19,8 +19,8 @@ def process_frame(img):
 
     for pt1, pt2 in matches:
         # de-normailze coords
-        u1, v1 = fe.denoramlize(pt1)
-        u2, v2 = fe.denoramlize(pt2)
+        u1, v1 = fe.camCoordToImgCoord(pt1)
+        u2, v2 = fe.camCoordToImgCoord(pt2)
         cv2.circle(img, (u1,v1), color=(0,255,0), radius=3)
         cv2.line(img, (u1,v1), (u2,v2), color=(255,0,0))
         

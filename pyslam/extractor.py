@@ -16,11 +16,10 @@ class Extractor(object):
         self.K = K
         self.Kinv = np.linalg.inv(self.K)
 
-    def normalize(self, pts):
+    def imgCoordToCamCoord(self, pts):
         return np.dot(self.Kinv, add_ones(pts).T).T[:, 0:2]
 
-
-    def denoramlize(self, pt):
+    def camCoordToImgCoord(self, pt):
         ret = np.dot(self.K, [pt[0], pt[1], 1])
         return int(round(ret[0])), int(round(ret[1]))
 
@@ -46,9 +45,9 @@ class Extractor(object):
         if len(ret) > 0:
             ret = np.array(ret)
             
-            # normalize coords, subtract to move to 0
-            ret[:, 0, :] = self.normalize(ret[:, 0, :])
-            ret[:, 1, :] = self.normalize(ret[:, 1, :])
+            # normalize coords
+            ret[:, 0, :] = self.imgCoordToCamCoord(ret[:, 0, :])
+            ret[:, 1, :] = self.imgCoordToCamCoord(ret[:, 1, :])
 
             # filtering the bad matches, use the ransac and fundamental mat
             model, inliers = ransac((ret[:, 0] , ret[:, 1]),
