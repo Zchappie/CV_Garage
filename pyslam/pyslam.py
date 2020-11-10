@@ -7,7 +7,7 @@ width = 1920//2
 height = 1080//2
 # display_name = 'SLAM'
 disp = Display(width, height)
-F = 1
+F = int(round(2175/2))
 K = np.array([[F,0,width//2],[0,F,height//2],[0, 0, 1]])
 fe = Extractor(K)
 

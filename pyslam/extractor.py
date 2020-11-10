@@ -5,6 +5,8 @@ np.set_printoptions(suppress=True)
 from skimage.measure import ransac
 from skimage.transform import EssentialMatrixTransform, FundamentalMatrixTransform
 
+focal_ests = []
+
 def add_ones(x):
     return np.concatenate([x, np.ones((x.shape[0], 1))], axis=1)
 
@@ -51,16 +53,18 @@ class Extractor(object):
 
             # filtering the bad matches, use the ransac and fundamental mat
             model, inliers = ransac((ret[:, 0] , ret[:, 1]),
-                        # EssentialMatrixTransform, 
-                        FundamentalMatrixTransform,
+                        EssentialMatrixTransform, 
+                        # FundamentalMatrixTransform,
                         min_samples=8,
-                        residual_threshold=1, 
+                        residual_threshold=0.001, 
                         max_trials=100)
-
+            print(len(ret), len(inliers))
             ret = ret[inliers]
 
             s, v, d = np.linalg.svd(model.params)
-            print(v)
+            focal_est = np.sqrt(2)/((v[0] + v[1])/2)
+            focal_ests.append(focal_est)
+            print(focal_est, np.median(focal_ests))
 
         # return
         self.last = {'kps':kps, 'des':des}
