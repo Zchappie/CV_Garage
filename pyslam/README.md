@@ -18,3 +18,4 @@ First time to try PyGame for display purpose.
 3. After extracting features, we need to match them between consecutive frames. `cv2.BFMatcher` is the brute force matcher, as usual, we choose `NORM_HAMMING` as match metric. Normally, ratio test is applied along with `knnMatch`, check [Brute-Force Matching with SIFT Descriptors and Ratio Test](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_matcher/py_matcher.html#brute-force-matching-with-sift-descriptors-and-ratio-test).
 4. Filter the bad matches using RNANSAC and fundamental matrix from `skimage`, works like a charm.
 5. Now, switch to essential matrix to mitigate the heavy workload on estimating parameters, and it requires matches from calibrated images. So we need to estimate the intrinsics through the fundamental matrix.
+   1. As fundamental matrix is a rank 2 matrix, the 
