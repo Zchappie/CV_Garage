@@ -137,3 +137,5 @@ pyslam/videos/
 pyslam/.vscode/
 
 *.JPG
+
+*.png
